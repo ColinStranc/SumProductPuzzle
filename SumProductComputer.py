@@ -69,24 +69,20 @@ class SumProductComputer:
 
     def satisfies_statements(self, x, y):
         self.depth += 1
-        if not self.satisfies_first_statement(x, y):
-            self.depth -= 1
+        satisfies_first = self.satisfies_first_statement(x, y)
+        self.depth -= 1
+        if not satisfies_first:
             self.print_if('{0} and {1} doesn\'t work. Someone who knows the product will '
                           'know what they are.'.format(x, y))
             return False
 
-        else:
-            self.depth -= 1
-
         self.depth += 1
-        if not self.satisfies_second_statement(x, y):
-            self.depth -= 1
+        satisfies_second = self.satisfies_second_statement(x, y)
+        self.depth -= 1
+        if not satisfies_second:
             self.print_if('{0} and {1} doesn\'t work. Someone who knows the sum and statement #1'
                           ' will know what they are.'.format(x, y))
             return False
-
-        else:
-            self.depth -= 1
 
         return True
 
@@ -162,8 +158,9 @@ class SumProductComputer:
             possible_y = target_product / possible_x
 
             self.depth += 1
-            if self.satisfies_basic_conditions(possible_x, possible_y):
-                self.depth -= 1
+            satisfies_basic = self.satisfies_basic_conditions(possible_x, possible_y)
+            self.depth -= 1
+            if satisfies_basic:
                 self.print_if('{0} and {1} work! They can be used to create product {2}'
                               .format(possible_x, possible_y, target_product))
 
@@ -172,7 +169,6 @@ class SumProductComputer:
                     break
 
             else:
-                self.depth -= 1
                 self.print_if('{0} and {1} doesn\'t work. They cannot be used to create product {2}.'
                               ' They do not satisfy the basic conditions'
                               .format(possible_x, possible_y, target_product))

@@ -12,7 +12,7 @@ def main():
     xy_min = 2
     sum_max = 50
 
-    sp_computer = SumProductComputer(xy_min, sum_max, 3)
+    sp_computer = SumProductComputer(xy_min, sum_max, 2)
 
     sp_computer.print_problem_description()
     sp_computer.print_parameters()

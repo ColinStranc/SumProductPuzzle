@@ -74,6 +74,17 @@ class SumProductComputer:
             self.print_if('{0} and {1} doesn\'t work. Someone who knows the product will '
                           'know what they are.'.format(x, y))
             return False
+
+        else:
+            self.depth -= 1
+
+        self.depth += 1
+        if not self.satisfies_second_statement(x, y):
+            self.depth -= 1
+            self.print_if('{0} and {1} doesn\'t work. Someone who knows the sum and statement #1'
+                          ' will know what they are.'.format(x, y))
+            return False
+
         else:
             self.depth -= 1
 
@@ -95,19 +106,9 @@ class SumProductComputer:
 
         return True
 
-    def x_gte_y(self, x, y):
-        return x >= y
-
-    def arg_too_small(self, x):
-        return x < self.arg_min
-
-    def sum_too_large(self, x, y):
-        return x + y > self.sum_max
-
     # 1. Someone who knows their product will know what they are.
     def satisfies_first_statement(self, x, y):
         product = x * y
-        possible_pairs = []
 
         self.depth += 1
         pairs = self.get_satisfactory_pairs_with_product(product, 2)
@@ -121,6 +122,34 @@ class SumProductComputer:
                       ' since ({2},{3}) and ({4},{5}) have the same '
                       'product.'.format(x, y, pairs[0][0], pairs[0][1], pairs[1][0], pairs[1][1]))
         return True
+
+    def satisfies_second_statement(self, x, y):
+        sum = x + y
+        possible_pairs = []
+
+        self.depth += 1
+        pairs = self.get_satisfactory_pairs_with_sum(sum, 2)
+        self.depth -= 1
+
+        if len(pairs) < 2:
+            self.print_if('{0} and {1} doesn\'t satisfy #2. There does not exist two pairs whose sum is'
+                          ' {2} and whose product is not defined by the constraints'.format(x, y, sum))
+            return False
+
+        self.print_if('{0} and {1} satisfy #2! Someone who knows their sum and statement #1 will not know what'
+                      ' they are, since ({2},{3}) and ({4},{5}) satisfy the same conditions.'
+                      .format(x, y, pairs[0][0], pairs[0][1], pairs[1][0], pairs[1][1]))
+        return True
+
+
+    def x_gte_y(self, x, y):
+        return x >= y
+
+    def arg_too_small(self, x):
+        return x < self.arg_min
+
+    def sum_too_large(self, x, y):
+        return x + y > self.sum_max
 
     def get_satisfactory_pairs_with_product(self, target_product, max_pairs_to_find):
         satisfactory_pairs = []
@@ -147,6 +176,38 @@ class SumProductComputer:
                 self.print_if('{0} and {1} doesn\'t work. They cannot be used to create product {2}.'
                               ' They do not satisfy the basic conditions'
                               .format(possible_x, possible_y, target_product))
+
+        return satisfactory_pairs
+
+    def get_satisfactory_pairs_with_sum(self, target_sum, max_pairs_to_find):
+        satisfactory_pairs = []
+
+        for possible_x in range(self.arg_min, target_sum):
+            possible_y = target_sum - possible_x
+
+            self.depth += 1
+            satisfies_basic_conditions = self.satisfies_basic_conditions(possible_x, possible_y)
+            self.depth -= 1
+
+            if satisfies_basic_conditions:
+                self.depth += 1
+                satisfies_first = self.satisfies_first_statement(possible_x, possible_y)
+                self.depth -= 1
+
+                if satisfies_first:
+                    self.print_if('{0} and {1} works! They add up to {2} and their product ({3})'
+                                  ' does not discern their identity.'
+                                  .format(possible_x, possible_y, target_sum, possible_x*possible_y))
+                    satisfactory_pairs.append((possible_x, possible_y))
+                    if len(satisfactory_pairs) >= max_pairs_to_find:
+                        break
+                else:
+                    self.print_if('{0} and {1} doesn\'t work. Their product ({2}) discerns their identity.'
+                                  .format(possible_x, possible_y, possible_x*possible_y))
+
+            else:
+                self.print_if('{0} and {1} doesn\'t work. They cannot be used to create sum {2} since'
+                              ' they do not satisfy the basic conditions.'.format(possible_x, possible_y, target_sum))
 
         return satisfactory_pairs
 

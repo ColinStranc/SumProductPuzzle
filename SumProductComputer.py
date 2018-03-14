@@ -84,13 +84,13 @@ class SumProductComputer:
                           ' does not discern the numbers'.format(x, y))
             return False
 
-        #self.depth += 1
-        #satisfies_third = self.satisfies_third_statement(x, y)
-        #self.depth -= 1
-        #if not satisfies_third:
-        #    self.print_if('{0} and {1} doesn\'t work. Someone who knows the product and statements #1 and #2'
-        #                  ' will not know what the numbers are.'.format(x, y))
-        #    return False
+        self.depth += 1
+        satisfies_third = self.satisfies_third_statement(x, y)
+        self.depth -= 1
+        if not satisfies_third:
+            self.print_if('{0} and {1} doesn\'t work. Someone who knows the product and statements #1 and #2'
+                          ' will not know what the numbers are.'.format(x, y))
+            return False
 
         return True
 

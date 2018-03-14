@@ -92,6 +92,14 @@ class SumProductComputer:
                           ' will not know what the numbers are.'.format(x, y))
             return False
 
+        self.depth += 1
+        satisfies_fourth = self.satisfies_fourth_statement(x, y)
+        self.depth -= 1
+        if not satisfies_fourth:
+            self.print_if('{0} and {1} doesn\'t work. Someone who knows the sum and statements #1, #2 and #3'
+                          ' will not know what the numbers are.'.format(x, y))
+            return False
+
         return True
 
     def satisfies_basic_conditions(self, x, y):
@@ -163,6 +171,22 @@ class SumProductComputer:
                       ' them from #1 and #2.'.format(x, y))
         return True
 
+    def satisfies_fourth_statement(self, x, y):
+        sum = x + y
+
+        self.depth += 1
+        pairs = self.get_satisfactory_pairs_4(sum, 2)
+        self.depth -= 1
+
+        if len(pairs) > 1:
+            self.print_if('{0} and {1} doesn\'t satisfy #4. Someone who knows their sum cannot figure them'
+                          ' out from #1, #2 and #3, since both ({2},{3}) and ({4},{5}) are options.'
+                          .format(x, y, pairs[0][0], pairs[0][1], pairs[1][0], pairs[1][1]))
+            return False
+
+        self.print_if('{0} and {1} satisfy #4! Someone who knows their sum can discern'
+                      ' them from #1, #2 and #3.'.format(x, y))
+        return True
 
     def x_gte_y(self, x, y):
         return x >= y
@@ -281,15 +305,14 @@ class SumProductComputer:
                     self.depth -= 1
 
                     if satisfies_second:
-                        self.print_if('{0} and {1} satisfies works! Their product is {2} and neither their sum or '
-                                      'product give them away without further information'
-                                      .format(possible_x, possible_y, target_product))
+                        self.print_if('{0} and {1} works! Their product is {2} and does not give them away, and the'
+                                      ' sum is enough to know that.'.format(possible_x, possible_y, target_product))
                         satisfactory_pairs.append((possible_x, possible_y))
                         if len(satisfactory_pairs) >= max_pairs_to_find:
                             break
 
                     else:
-                        self.print_if('{0} and {1} doesn\'t work. Their sum gives them away when knowing that the'
+                        self.print_if('{0} and {1} doesn\'t work. Their sum is not enough to know that the'
                                       ' product does not give them away.'.format(possible_x, possible_y))
                 else:
                     self.print_if('{0} and {1} doesn\'t work. They are immidiately discernable by their product.'
@@ -299,6 +322,57 @@ class SumProductComputer:
                               ' They do not satisfy the basic conditions'
                               .format(possible_x, possible_y, target_product))
 
+
+        return satisfactory_pairs
+
+
+    def get_satisfactory_pairs_4(self, target_sum, max_pairs_to_find):
+        satisfactory_pairs = []
+
+        for possible_x in range(self.arg_min, min(target_sum, self.largest_x())):
+            possible_y = target_sum - possible_x
+
+            self.depth += 1
+            satisfies_basic = self.satisfies_basic_conditions(possible_x, possible_y)
+            self.depth -= 1
+
+            if satisfies_basic:
+                self.depth += 1
+                satisfies_first = self.satisfies_first_statement(possible_x, possible_y)
+                self.depth -= 1
+
+                if satisfies_first:
+                    self.depth += 1
+                    satisfies_second = self.satisfies_second_statement(possible_x, possible_y)
+                    self.depth -= 1
+
+                    if satisfies_second:
+                        self.depth += 1
+                        satisfies_third = self.satisfies_third_statement(possible_x, possible_y)
+                        self.depth -= 1
+
+                        if satisfies_third:
+                            self.print_if('{0} and {1} works! Their sum is {2} and is enough to know that the'
+                                          ' product does not give them away. As well, all other factors do not'
+                                          ' imply the products un-guessability.'
+                                          .format(possible_x, possible_y, target_sum))
+                            satisfactory_pairs.append((possible_x, possible_y))
+                            if len(satisfactory_pairs) >= max_pairs_to_find:
+                                break
+                        else:
+                            self.print_if('{0} and {1} doesn\'t work. Other factors of their product imply the'
+                                          ' products un-guessability'.format(possible_x, possible_y))
+
+                    else:
+                        self.print_if('{0} and {1} doesn\'t work. Their sum is not enough to know that the'
+                                      ' product does not give them away.'.format(possible_x, possible_y))
+                else:
+                    self.print_if('{0} and {1} doesn\'t work. They are immidiately discernable by their product.'
+                                  .format(possible_x, possible_y))
+            else:
+                self.print_if('{0} and {1} doesn\'t work. They cannot be used to create sum {2}.'
+                              ' They do not satisfy the basic conditions'
+                              .format(possible_x, possible_y, target_sum))
 
         return satisfactory_pairs
 

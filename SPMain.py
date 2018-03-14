@@ -1,5 +1,6 @@
 from SumProductComputer import SumProductComputer
 
+
 # Checks every pair of (not equal) numbers, who are greater than 1 (xy_min) and whose sum is smaller than 100 (sum_max).
 # Checks those pairs for the truth of these four statements:
 #  1: Someone who knows the product does not know what the numbers are.
@@ -10,9 +11,9 @@ def main():
     print("######### Starting Sum Product problem ##############")
 
     xy_min = 2
-    sum_max = 50
+    sum_max = 20
 
-    sp_computer = SumProductComputer(xy_min, sum_max, 2)
+    sp_computer = SumProductComputer(xy_min, sum_max, 5)
 
     sp_computer.print_problem_description()
     sp_computer.print_parameters()
@@ -27,6 +28,6 @@ def print_answers(answer_tuples):
     print('Answers:')
     for answer_tuple in answer_tuples:
         print('  {0}'.format(answer_tuple))
-
+    print('  {0} possible answers'.format(len(answer_tuples)))
 
 main()

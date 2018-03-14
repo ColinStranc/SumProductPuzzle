@@ -12,15 +12,15 @@ class SumProductComputer:
         print(' 4: Someone who knows statements #1-3 and knows the sum DOES know what the numbers are.')
         print('Visit https://en.wikipedia.org/wiki/Sum_and_Product_Puzzle for details')
 
-    def __init__(self, arg_min=2, sum_max=100, verbosity=2):
+    def __init__(self, arg_min=2, sum_max=100, verbosity=3):
         self.arg_min = arg_min
         self.sum_max = sum_max
         self.possible_pairs = []
 
         # verbosity uses integer levels.
         # 1 = don't print anything
-        # 2 = print high level info
-        # 3 = print everything
+        # 2 = print everything
+        # 3 and up = print the first n-2 levels.
         self.verbosity = self.set_verbosity(verbosity)
         self.depth = 0
 
@@ -224,12 +224,12 @@ class SumProductComputer:
 
         if self.verbosity == 1:
             return
-        if self.verbosity == 3:
+        if self.verbosity == 2:
             print('{0}{1}'.format(indent * self.depth, text))
             return
-        if self.verbosity == 2:
-            if self.depth == 0:
-                print(text)
+        if self.verbosity > 2:
+            if self.depth < self.verbosity-2:
+                print('{0}{1}'.format(indent * self.depth, text))
                 return
             else:
                 return
@@ -238,8 +238,9 @@ class SumProductComputer:
 
     @staticmethod
     def set_verbosity(verbosity):
-        if verbosity != 0 and verbosity != 1 and verbosity != 2 and verbosity != 3:
-            raise Exception('Invalid verbosity {0}, must be between 0-3. Default is 2.'.format(verbosity))
+        if verbosity < 0:
+            raise Exception('Invalid verbosity {0}. Must be above 0. 0=default, 1=nothing, 2=everything,'
+                            ' 3+ = n-1 levels of text'.format(verbosity))
         if verbosity == 0:
-            return 2
+            return 3
         return verbosity
